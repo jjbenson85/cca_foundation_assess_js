@@ -2,7 +2,13 @@ import { describe, expect, it } from "vitest";
 import { Warehouse, Product } from "../warehouse";
 
 describe("Warehouse", () => {
-  const catalogue = new Map();
+  const catalogue = new Map(
+    [
+        ['a', new Product('a', 'A very nice product', 10.00)],
+        ['b', new Product('b', 'A very nice product', 20.00)],
+        ['c', new Product('c', 'A very nice product', 30.00)]
+    ]
+  );
   it("should have a catalogue", () => {
     const warehouse = new Warehouse(catalogue);
     expect(warehouse.catalogue).toEqual(catalogue);
