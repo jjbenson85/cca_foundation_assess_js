@@ -2,16 +2,28 @@ import { describe, expect, it } from "vitest";
 import { Warehouse, Product } from "../warehouse";
 
 describe("Warehouse", () => {
-  const catalogue = new Map(
-    [
-        ['a', new Product('a', 'A very nice product', 10.00)],
-        ['b', new Product('b', 'A very nice product', 20.00)],
-        ['c', new Product('c', 'A very nice product', 30.00)]
-    ]
-  );
+  const productA = new Product("a", "A very nice product", 10.0);
+  const productB = new Product("b", "A very nice product", 20.0);
+  const productC = new Product("c", "A very nice product", 30.0);
+  const catalogue = new Map([
+    [productA, 100],
+    [productB, 200],
+    [productC, 300],
+  ]);
   it("should have a catalogue", () => {
     const warehouse = new Warehouse(catalogue);
     expect(warehouse.catalogue).toEqual(catalogue);
+  });
+
+  it.each([
+    ['productA', productA, 100],
+    ['productB', productB, 200],
+    ['productC', productC, 300],
+  ])("should get the quantity of %s", (_id, product, expected) => {
+    const warehouse = new Warehouse(catalogue);
+    expect(
+      warehouse.getQuantity(product)
+    ).toEqual(expected);
   });
 });
 

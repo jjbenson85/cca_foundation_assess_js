@@ -14,4 +14,10 @@ export class Warehouse {
     constructor(catalogue:Map<Product, number>) {
         this.catalogue = catalogue
     }
+
+    getQuantity(product:Product):number|Error {
+        const quantity = this.catalogue.get(product)
+        if(!quantity) return Error("Product not found")
+        return quantity
+    }
 }
