@@ -8,9 +8,9 @@ const productC = new Product("c", "A very nice product", 30.0);
 
 describe("Order", () => {
   const catalogue = new Map([
-    ["a", productA],
-    ["b", productB],
-    ["c", productC],
+    [productA, 100],
+    [productB, 100],
+    [productC, 100],
   ]);
   const warehouse = new Warehouse(catalogue);
   it("should have an empty list of items and a shipping address", () => {
