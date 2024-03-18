@@ -16,14 +16,12 @@ describe("Warehouse", () => {
   });
 
   it.each([
-    ['productA', productA, 100],
-    ['productB', productB, 200],
-    ['productC', productC, 300],
+    ["productA", productA, 100],
+    ["productB", productB, 200],
+    ["productC", productC, 300],
   ])("should get the quantity of %s", (_id, product, expected) => {
     const warehouse = new Warehouse(catalogue);
-    expect(
-      warehouse.getQuantity(product)
-    ).toEqual(expected);
+    expect(warehouse.getQuantity(product)).toEqual(expected);
   });
 
   it("should return an error if the product is not found", () => {
@@ -31,7 +29,29 @@ describe("Warehouse", () => {
     expect(
       warehouse.getQuantity(new Product("d", "A very nice product", 40.0))
     ).toEqual(Error("Product not found"));
-  })
+  });
+
+  it.each([
+    ["10 of productA are available", productA, 10, true],
+    ["100 of productA are available", productA, 100, true],
+    ["200 of productA are not available", productA, 200, false],
+  ])(
+    "should return the correct response for when %s",
+    (_is, product, quantity, expected) => {
+      const warehouse = new Warehouse(catalogue);
+      expect(warehouse.isProductAvailable(product, quantity)).toEqual(expected);
+    }
+  );
+
+  it("should return an error if the product is not found", () => {
+    const warehouse = new Warehouse(catalogue);
+    expect(
+      warehouse.isProductAvailable(
+        new Product("d", "A very nice product", 40.0),
+        10
+      )
+    ).toEqual(Error("Product not found"));
+  });
 });
 
 describe("Product", () => {

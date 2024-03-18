@@ -20,4 +20,10 @@ export class Warehouse {
         if(!quantity) return Error("Product not found")
         return quantity
     }
+
+    isProductAvailable(product:Product, quantity:number):boolean|Error {
+        const availableQuatity =  this.getQuantity(product)
+        if( availableQuatity instanceof Error) return availableQuatity
+        return availableQuatity >= quantity
+    }
 }
