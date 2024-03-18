@@ -9,7 +9,7 @@ class Product {
     }
 }
 
-class Warehouse {
+export class Warehouse {
     catalogue // a dictionary of products with associated stock level
     constructor() {
         this.catalogue = {}

@@ -1,3 +1,5 @@
+import { Warehouse } from './warehouse';
+
 export class Item {
   product: string;
   quantity: number;
@@ -10,10 +12,14 @@ export class Item {
 export class Order {
   items: Item[];
   shippingAddress: string;
-  constructor(shippingAddress: string) {
+  warehouse: Warehouse;
+
+  constructor(shippingAddress: string, warehouse: Warehouse) {
     this.items = [];
     this.shippingAddress = shippingAddress;
+    this.warehouse = warehouse;
   }
+  
   add(item: Item) {
     this.items.push(item);
   }
