@@ -19,8 +19,12 @@ export class Order {
     this.shippingAddress = shippingAddress;
     this.warehouse = warehouse;
   }
-  
-  add(item: Item) {
+  add(item: Item): void | Error{
+    const isProductAvailable = this.warehouse.isProductAvailable(item.product, item.quantity);
+    
+    if(isProductAvailable instanceof Error) return isProductAvailable;
+    if(!isProductAvailable) return Error("Not enough stock")
+    
     this.items.push(item);
   }
 }

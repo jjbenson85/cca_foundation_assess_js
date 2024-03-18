@@ -45,6 +45,18 @@ describe("Order", () => {
 
     expect(order.items).toEqual(items);
   });
+
+  it("should return an error if there is not enough stock", () => {
+    const order = new Order("123 Fake St", warehouse);
+    const item = new Item(productA, 101);
+    expect(order.add(item)).toEqual(Error("Not enough stock"));
+  });
+
+  it("should return an error if the product is not found", () => {
+    const order = new Order("123 Fake St", warehouse);
+    const item = new Item(new Product("d", "Not a real product", 40.0), 10);
+    expect(order.add(item)).toEqual(Error("Product not found"));
+  });
 });
 
 describe("Item", () => {
