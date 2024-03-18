@@ -33,16 +33,19 @@ export class Order {
   items: Item[];
   shippingAddress: Address;
   warehouse: Warehouse;
+  orderHistory: OrderHistory;
   calculateShipping: typeof calculateShippingFn;
 
   constructor(
     shippingAddress: Address,
     warehouse: Warehouse,
+    orderHistory: OrderHistory,
     calculateShipping = calculateShippingFn
   ) {
     this.items = [];
     this.shippingAddress = shippingAddress;
     this.warehouse = warehouse;
+    this.orderHistory = orderHistory;
     this.calculateShipping = calculateShipping;
   }
   add(item: Item): void | Error {
@@ -90,6 +93,7 @@ export class Order {
       });
       this.items.forEach((item) => {
         this.warehouse.adjustStock(item.product, item.quantity);
+        this.orderHistory.add(this);
       });
     } catch (e) {
       console.error(e);

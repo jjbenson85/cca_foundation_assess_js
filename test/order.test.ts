@@ -23,19 +23,21 @@ const addressA = new Address({
 });
 
 describe("Order", () => {
+    const orderHistory = new OrderHistory();
+
   it("should have an empty list of items and a shipping address", () => {
-    const order = new Order(addressA, warehouse);
+    const order = new Order(addressA, warehouse, orderHistory);
     expect(order.items).toEqual([]);
   });
 
   it("should have a shipping address", () => {
-    const order = new Order(addressA, warehouse);
+    const order = new Order(addressA, warehouse, orderHistory);
     expect(order.shippingAddress).toEqual(addressA);
   });
 
   it("should have a warehouse", () => {
-    const order = new Order(addressA, warehouse);
-    expect(order.warehouse).toEqual(warehouse);
+    const order = new Order(addressA, warehouse, orderHistory);
+    expect(order.warehouse, ).toEqual(warehouse);
   });
 
   it.each([
@@ -47,7 +49,7 @@ describe("Order", () => {
       [new Item(productA, 1), new Item(productB, 2), new Item(productC, 3)],
     ],
   ] as [string, Item[]][])("should be able to add %s", (_id, items) => {
-    const order = new Order(addressA, warehouse);
+    const order = new Order(addressA, warehouse, orderHistory);
 
     for (const item of items) {
       order.add(item);
@@ -57,13 +59,13 @@ describe("Order", () => {
   });
 
   it("should return an error if there is not enough stock", () => {
-    const order = new Order(addressA, warehouse);
+    const order = new Order(addressA, warehouse, orderHistory);
     const item = new Item(productA, 101);
     expect(order.add(item)).toEqual(Error("Not enough stock"));
   });
 
   it("should return an error if the product is not found", () => {
-    const order = new Order(addressA, warehouse);
+    const order = new Order(addressA, warehouse, orderHistory);
     const item = new Item(new Product("d", "Not a real product", 40.0), 10);
     expect(order.add(item)).toEqual(Error("Product not found"));
   });
@@ -80,7 +82,7 @@ describe("Order", () => {
   ] as [string, Item[], number][])(
     "should calculate the subtotal for %s",
     (_id, items, expected) => {
-      const order = new Order(addressA, warehouse);
+      const order = new Order(addressA, warehouse, orderHistory);
 
       for (const item of items) {
         order.add(item);
@@ -99,7 +101,7 @@ describe("Order", () => {
     async (_id, product, quantity, expected) => {
       const calculateShipping = async () => 4.99;
 
-      const order = new Order(addressA, warehouse, calculateShipping);
+      const order = new Order(addressA, warehouse,orderHistory, calculateShipping);
       const item = new Item(product, quantity);
 
       order.add(item);
@@ -112,7 +114,7 @@ describe("Order", () => {
 
   it("should update the quantities of the warehouse when confirmed", () => {
     const warehouse = new Warehouse(catalogue);
-    const order = new Order(addressA, warehouse);
+    const order = new Order(addressA, warehouse, orderHistory);
     const item = new Item(productA, 10);
     order.add(item);
     order.confirm();
@@ -121,7 +123,7 @@ describe("Order", () => {
 
   it("should throw an error if the product is not found when confirmed", () => {
     const warehouse = new Warehouse(catalogue);
-    const order = new Order(addressA, warehouse);
+    const order = new Order(addressA, warehouse, orderHistory);
     const item = new Item(productA, 10);
     order.add(item);
 
@@ -133,7 +135,7 @@ describe("Order", () => {
 
   it("should throw an error if the quantity is not available when confirmed", () => {
     const warehouse = new Warehouse(catalogue);
-    const order = new Order(addressA, warehouse);
+    const order = new Order(addressA, warehouse, orderHistory);
     const item = new Item(productA, 50);
     order.add(item);
 
@@ -142,6 +144,18 @@ describe("Order", () => {
 
     expect(() => order.confirm()).toThrowError("Not enough stock");
   });
+
+  it("should add itself to the order history when confirmed", () => {
+    const warehouse = new Warehouse(catalogue);
+    const orderHistory = new OrderHistory();
+    const order = new Order(addressA, warehouse, orderHistory);
+    const item = new Item(productA, 10);
+    order.add(item);
+    order.confirm();
+    const orders = orderHistory.productOrders.get(productA);
+    if (!orders) throw Error("Order not found");
+    expect(orders).toEqual(new Set([order]));
+  })
 });
 
 describe("Item", () => {
@@ -207,7 +221,7 @@ describe("OrderHistory", () => {
 
   it("should be able to add an order to the productOrders", () => {
     const orderHistory = new OrderHistory();
-    const order = new Order(addressA, warehouse);
+    const order = new Order(addressA, warehouse, orderHistory);
     order.add(new Item(productA, 1));
     orderHistory.add(order);
     const orders = orderHistory.productOrders.get(productA);
@@ -217,7 +231,7 @@ describe("OrderHistory", () => {
 
   it("should be able to add an order to the addressOrders", () => {
     const orderHistory = new OrderHistory();
-    const order = new Order(addressA, warehouse);
+    const order = new Order(addressA, warehouse, orderHistory);
     order.add(new Item(productA, 1));
     orderHistory.add(order);
     const orders = orderHistory.addressOrders.get(addressA);
