@@ -1,9 +1,9 @@
-import { Warehouse } from './warehouse';
+import { Product, Warehouse } from './warehouse';
 
 export class Item {
-  product: string;
+  product: Product;
   quantity: number;
-  constructor(product: string, quantity: number) {
+  constructor(product: Product, quantity: number) {
     this.product = product;
     this.quantity = quantity;
   }
