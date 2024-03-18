@@ -1,4 +1,24 @@
-import { Product, Warehouse } from './warehouse';
+import { Product, Warehouse } from "./warehouse";
+import { calculateShipping as calculateShippingFn } from "./shipping";
+import { Country } from "./countries";
+
+export class Address {
+  country: Country;
+  city: string;
+  street: string;
+  postcode: string;
+  constructor(address: {
+    country: Country;
+    city: string;
+    street: string;
+    postcode: string;
+  }) {
+    this.country = address.country;
+    this.city = address.city;
+    this.street = address.street;
+    this.postcode = address.postcode;
+  }
+}
 
 export class Item {
   product: Product;
@@ -11,25 +31,37 @@ export class Item {
 
 export class Order {
   items: Item[];
-  shippingAddress: string;
+  shippingAddress: Address;
   warehouse: Warehouse;
+  calculateShipping: typeof calculateShippingFn;
 
-  constructor(shippingAddress: string, warehouse: Warehouse) {
+  constructor(
+    shippingAddress: Address,
+    warehouse: Warehouse,
+    calculateShipping = calculateShippingFn
+  ) {
     this.items = [];
     this.shippingAddress = shippingAddress;
     this.warehouse = warehouse;
+    this.calculateShipping = calculateShipping;
   }
-  add(item: Item): void | Error{
-    const isProductAvailable = this.warehouse.isProductAvailable(item.product, item.quantity);
-    
-    if(isProductAvailable instanceof Error) return isProductAvailable;
-    if(!isProductAvailable) return Error("Not enough stock")
-    
+  add(item: Item): void | Error {
+    const isProductAvailable = this.warehouse.isProductAvailable(
+      item.product,
+      item.quantity
+    );
+
+    if (isProductAvailable instanceof Error) return isProductAvailable;
+    if (!isProductAvailable) return Error("Not enough stock");
+
     this.items.push(item);
   }
 
   getSubtotal(): number {
-    return this.items.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
+    return this.items.reduce(
+      (acc, item) => acc + item.product.price * item.quantity,
+      0
+    );
   }
   
 }
