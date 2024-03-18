@@ -25,6 +25,13 @@ describe("Warehouse", () => {
       warehouse.getQuantity(product)
     ).toEqual(expected);
   });
+
+  it("should return an error if the product is not found", () => {
+    const warehouse = new Warehouse(catalogue);
+    expect(
+      warehouse.getQuantity(new Product("d", "A very nice product", 40.0))
+    ).toEqual(Error("Product not found"));
+  })
 });
 
 describe("Product", () => {
