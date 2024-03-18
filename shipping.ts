@@ -1,4 +1,4 @@
-const https = require("https");
+import https from "https";
 
 /**
  * Returns the region based on the country
@@ -15,18 +15,12 @@ export function getRegion(country: string): Promise<"UK" | "EU" | "OTHER"> {
 
         resp.on("data", (chunk) => {
           data += chunk;
-        })
+        });
 
         resp.on("end", () => {
           const region = getRegionFromData(data);
-          if (region instanceof Error) {
-            reject(region);
-          } else {
-            resolve(region);
-          }
-        })
-
-       
+          resolve(region);
+        });
       })
       .on("error", (err) => {
         reject(err);
@@ -36,23 +30,22 @@ export function getRegion(country: string): Promise<"UK" | "EU" | "OTHER"> {
 
 /**
  * Get the region from the data
- * @param data 
+ * @param data
  * @returns  "UK" | "EU" | "OTHER"
  * @error if the region is invalid or the data is invalid
  */
-export function getRegionFromData(data){
+export function getRegionFromData(data: string) {
   try {
     const region = JSON.parse(data).region;
     if (["UK", "EU", "OTHER"].includes(region)) {
-      return (region as "UK" | "EU" | "OTHER");
+      return region as "UK" | "EU" | "OTHER";
     } else {
-      return (new Error("Invalid region"));
+      throw new Error("Invalid region");
     }
   } catch (error) {
-    return(error);
+    throw error;
   }
 }
-
 
 /**
  * Returns the shipping cost based on the region and order total

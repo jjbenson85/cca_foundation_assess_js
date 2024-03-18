@@ -3,7 +3,6 @@ import { calculateShipping as calculateShippingFn } from "./shipping";
 import { SalesHistory } from "./history";
 import { Address } from "./address";
 
-
 export class Item {
   product: Product;
   quantity: number;
@@ -35,7 +34,7 @@ export class Order {
 
   /**
    * Add an item to the order
-   * @param item 
+   * @param item
    * @returns an Error if the product is not available
    */
   add(item: Item): void | Error {
@@ -76,7 +75,10 @@ export class Order {
     } catch (e) {
       console.error(e);
       if (e instanceof Error) return e;
-      return Error(e);
+      if (typeof e === "string") {
+        return Error(e);
+      }
+      throw Error(e as string);
     }
   }
 
@@ -85,7 +87,7 @@ export class Order {
    * Products will be checked for availability before adjusting the stock.
    * @error if the product is not available
    * @error if the shipping cost cannot be calculated
-   * 
+   *
    */
   confirm(): void {
     try {
@@ -107,5 +109,3 @@ export class Order {
     }
   }
 }
-
-

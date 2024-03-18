@@ -1,4 +1,5 @@
-import { Order, Address } from "./order";
+import { Address } from "./address";
+import { Order } from "./order";
 import { Product } from "./warehouse";
 
 export class SalesHistory {

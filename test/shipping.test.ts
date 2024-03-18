@@ -64,13 +64,11 @@ describe("Shipping", () => {
 
     it("should throw an error if the region is invalid",()=>{
         const data = JSON.stringify({region: "INVALID"})
-        const region = getRegionFromData(data)
-        expect(region).toEqual(new Error("Invalid region"))
+        expect(()=> getRegionFromData(data)).toThrowError("Invalid region")
     })
 
     it("should throw an error if the data is invalid",()=>{
         const data = "INVALID"
-        const region = getRegionFromData(data)
-        expect(region).toEqual(new Error("Unexpected token I in JSON at position 0"))
+        expect(()=> getRegionFromData(data)).toThrowError(new Error("Unexpected token I in JSON at position 0"))
     })
 })
