@@ -11,6 +11,11 @@ describe("Shipping", () => {
         [
             "UK",
             100,
+            4.99
+        ],
+        [
+            "UK",
+            120,
             0
         ],
         [
@@ -27,8 +32,18 @@ describe("Shipping", () => {
             "OTHER",
             100,
             9.99
+        ],
+        [
+            "OTHER",
+            199,
+            9.99
+        ],
+        [
+            "OTHER",
+            200,
+            5.99
         ]
-    ] as const)("should calculate the shipping cost from %s", async (region, orderTotal, expected) => {
+    ] as const)("should calculate the shipping cost from %s %f", async (region, orderTotal, expected) => {
         const shipping = await calculateShippingFromRegion(region, orderTotal)
         expect(shipping).toEqual(expected)
     })

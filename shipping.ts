@@ -36,22 +36,25 @@ export function getRegion(country: string): Promise<"UK" | "EU" | "OTHER"> {
 export const calculateShippingFromRegion = (
   region: "UK" | "EU" | "OTHER",
   orderTotal: number
-):number => {
-  switch(region) {
+): number => {
+  switch (region) {
     case "UK":
-      if (orderTotal < 100.0) {
+      if (orderTotal < 120.0) {
         return 4.99;
-      }else{
-        return 0.0;
       }
+      return 0.0;
+
     case "EU":
       if (orderTotal < 100) {
         return 8.99;
-      } else {
-        return 4.99;
       }
+      return 4.99;
+
     case "OTHER":
-      return 9.99;
+      if (orderTotal < 200) {
+        return 9.99;
+      }
+      return 5.99;
   }
   region satisfies never;
 };
