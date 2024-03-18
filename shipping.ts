@@ -1,5 +1,11 @@
 const https = require("https");
 
+/**
+ * Returns the region based on the country
+ * @param country
+ * @returns The region as a string
+ * @error if the request fails
+ */
 export function getRegion(country: string): Promise<"UK" | "EU" | "OTHER"> {
   const url = `https://npovmrfcyzu2gu42pmqa7zce6a0zikbf.lambda-url.eu-west-2.on.aws/?country=${country}`;
   return new Promise<"UK" | "EU" | "OTHER">((resolve, reject) => {
@@ -7,32 +13,53 @@ export function getRegion(country: string): Promise<"UK" | "EU" | "OTHER"> {
       .get(url, (resp) => {
         let data = "";
 
-        // A chunk of data has been received.
         resp.on("data", (chunk) => {
           data += chunk;
-        });
+        })
 
-        // The whole response has been received. Process the data.
         resp.on("end", () => {
-          try {
-            const region = JSON.parse(data).region;
-            if (["UK", "EU", "OTHER"].includes(region)) {
-              resolve(region as "UK" | "EU" | "OTHER");
-            } else {
-              reject(new Error("Invalid region"));
-            }
-          } catch (error) {
-            reject(error);
+          const region = getRegionFromData(data);
+          if (region instanceof Error) {
+            reject(region);
+          } else {
+            resolve(region);
           }
-        });
+        })
+
+       
       })
       .on("error", (err) => {
-        // Use the callback to return HTTP request errors
         reject(err);
       });
   });
 }
 
+/**
+ * Get the region from the data
+ * @param data 
+ * @returns  "UK" | "EU" | "OTHER"
+ * @error if the region is invalid or the data is invalid
+ */
+export function getRegionFromData(data){
+  try {
+    const region = JSON.parse(data).region;
+    if (["UK", "EU", "OTHER"].includes(region)) {
+      return (region as "UK" | "EU" | "OTHER");
+    } else {
+      return (new Error("Invalid region"));
+    }
+  } catch (error) {
+    return(error);
+  }
+}
+
+
+/**
+ * Returns the shipping cost based on the region and order total
+ * @param region
+ * @param orderTotal
+ * @returns The shipping cost as a number
+ */
 export const calculateShippingFromRegion = (
   region: "UK" | "EU" | "OTHER",
   orderTotal: number
@@ -59,6 +86,13 @@ export const calculateShippingFromRegion = (
   region satisfies never;
 };
 
+/**
+ * Calculates the shipping cost based on the country and order total
+ * @param country
+ * @param orderTotal
+ * @returns the shipping cost as a number
+ * @error if the request fails
+ */
 export const calculateShipping = async (
   country: string,
   orderTotal: number
