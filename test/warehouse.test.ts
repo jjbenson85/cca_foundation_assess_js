@@ -69,14 +69,23 @@ describe("Warehouse", () => {
     ).toThrowError("Product not found");
   });
 
-  it('should remove a product from the catalogue', () => {
+  it("should remove a product from the catalogue", () => {
     const warehouse = new Warehouse(catalogue);
     warehouse.removeProduct(productA);
     expect(warehouse.catalogue.get(productA)).toBeUndefined();
-  })
+  });
 
+  it("should return an error if the product is not found when removing", () => {
+    const warehouse = new Warehouse(catalogue);
+    expect(
+      warehouse.removeProduct(new Product("d", "A very nice product", 40.0))
+    ).toEqual(Error("Product not found"));
+  });
 
-
+  it("should add stock of a product to the warehouse and returns the new stock level", () => {
+    const warehouse = new Warehouse(catalogue);
+    expect(warehouse.receiveStock(productA, 10)).toEqual(110);
+  });
 });
 
 describe("Product", () => {

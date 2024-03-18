@@ -49,6 +49,20 @@ export class Warehouse {
     }
 
     /**
+     * Adds stock of a product to the warehouse and returns the new stock level.
+     * If the product is not already in the warehouse, it is added.
+     * @param product 
+     * @param quantity 
+     * @returns 
+     */
+    receiveStock(product:Product, quantity:number):number {
+        const currentQuantity = this.catalogue.get(product) || 0
+        const newQuantity = currentQuantity + quantity
+        this.catalogue.set(product, newQuantity)
+        return newQuantity
+    }
+
+    /**
      *  Checks if the given quantity of a product is available
      * @param product 
      * @param quantity 
