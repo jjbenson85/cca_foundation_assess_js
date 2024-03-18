@@ -1,19 +1,22 @@
 export class Item {
-    product
-    quantity
-    constructor(product, quantity) {
-        this.product = product
-        this.quantity = quantity;
-    }
+  product: string;
+  quantity: number;
+  constructor(product: string, quantity: number) {
+    this.product = product;
+    this.quantity = quantity;
+  }
 }
 
 export class Order {
-    items
-    shippingAddress
-    constructor(shippingAddress) {
-        this.items = []
-        this.shippingAddress = shippingAddress;
-    }
+  items: Item[];
+  shippingAddress: string;
+  constructor(shippingAddress: string) {
+    this.items = [];
+    this.shippingAddress = shippingAddress;
+  }
+  add(item: Item) {
+    this.items.push(item);
+  }
 }
 
 // Add Item - add an item to an order. An order item has a product and a quantity. There must be sufficient stock of that product to fulfil the order
