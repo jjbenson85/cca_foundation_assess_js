@@ -1,8 +1,9 @@
-import { Order, Item, Address } from "../order";
+import { Order, Item } from "../order";
 import { describe, expect, it } from "vitest";
 import { Product, Warehouse } from "../warehouse";
 import { Country } from "../countries";
 import { SalesHistory } from "../history";
+import { Address } from "../address";
 
 const productA = new Product("a", "A very nice product", 10.0);
 const productB = new Product("b", "A very nice product", 20.0);
@@ -19,12 +20,13 @@ const warehouse = new Warehouse(catalogue);
 const addressA = new Address({
   country: Country.UNITED_KINGDOM,
   city: "London",
-  street: "123 Fake St",
+  street: "Fake St",
   postcode: "E1 4UD",
+  house: "123"
 });
 
 describe("Order", () => {
-    const orderHistory = new SalesHistory();
+  const orderHistory = new SalesHistory();
 
   it("should have an empty list of items and a shipping address", () => {
     const order = new Order(addressA, warehouse, orderHistory);
@@ -38,7 +40,7 @@ describe("Order", () => {
 
   it("should have a warehouse", () => {
     const order = new Order(addressA, warehouse, orderHistory);
-    expect(order.warehouse, ).toEqual(warehouse);
+    expect(order.warehouse).toEqual(warehouse);
   });
 
   it.each([
@@ -102,7 +104,12 @@ describe("Order", () => {
     async (_id, product, quantity, expected) => {
       const calculateShipping = async () => 4.99;
 
-      const order = new Order(addressA, warehouse,orderHistory, calculateShipping);
+      const order = new Order(
+        addressA,
+        warehouse,
+        orderHistory,
+        calculateShipping
+      );
       const item = new Item(product, quantity);
 
       order.add(item);
@@ -156,7 +163,7 @@ describe("Order", () => {
     const orders = orderHistory.productOrders.get(productA);
     if (!orders) throw Error("Order not found");
     expect(orders).toEqual(new Set([order]));
-  })
+  });
 });
 
 describe("Item", () => {
@@ -169,43 +176,3 @@ describe("Item", () => {
     expect(item.quantity).toEqual(1);
   });
 });
-
-describe("Address", () => {
-  it("should have a country", () => {
-    const address = new Address({
-      country: Country.UNITED_KINGDOM,
-      city: "London",
-      street: "123 Fake St",
-      postcode: "E1 4UD",
-    });
-    expect(address.country).toEqual(Country.UNITED_KINGDOM);
-  });
-  it("should have a city", () => {
-    const address = new Address({
-      country: Country.UNITED_KINGDOM,
-      city: "London",
-      street: "123 Fake St",
-      postcode: "E1 4UD",
-    });
-    expect(address.city).toEqual("London");
-  });
-  it("should have a street", () => {
-    const address = new Address({
-      country: Country.UNITED_KINGDOM,
-      city: "London",
-      street: "123 Fake St",
-      postcode: "E1 4UD",
-    });
-    expect(address.street).toEqual("123 Fake St");
-  });
-  it("should have a postcode", () => {
-    const address = new Address({
-      country: Country.UNITED_KINGDOM,
-      city: "London",
-      street: "123 Fake St",
-      postcode: "E1 4UD",
-    });
-    expect(address.postcode).toEqual("E1 4UD");
-  });
-});
-

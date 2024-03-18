@@ -1,8 +1,9 @@
 import { Country } from "../countries";
 import { SalesHistory } from "../history";
-import { Order, Item, Address } from "../order";
+import { Order, Item } from "../order";
 import { describe, it, expect } from "vitest";
 import { Product, Warehouse } from "../warehouse";
+import { Address } from "../address";
 
 
 const productA = new Product("a", "A very nice product", 10.0);
@@ -20,8 +21,9 @@ const warehouse = new Warehouse(catalogue);
 const addressA = new Address({
   country: Country.UNITED_KINGDOM,
   city: "London",
-  street: "123 Fake St",
   postcode: "E1 4UD",
+  street: "Fake St",
+  house: "123",
 });
 
 

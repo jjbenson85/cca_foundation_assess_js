@@ -1,26 +1,8 @@
 import { Product, Warehouse } from "./warehouse";
 import { calculateShipping as calculateShippingFn } from "./shipping";
-import { Country } from "./countries";
 import { SalesHistory } from "./history";
+import { Address } from "./address";
 
-
-export class Address {
-  country: Country;
-  city: string;
-  street: string;
-  postcode: string;
-  constructor(address: {
-    country: Country;
-    city: string;
-    street: string;
-    postcode: string;
-  }) {
-    this.country = address.country;
-    this.city = address.city;
-    this.street = address.street;
-    this.postcode = address.postcode;
-  }
-}
 
 export class Item {
   product: Product;
