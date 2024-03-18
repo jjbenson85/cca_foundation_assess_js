@@ -12,7 +12,7 @@ export class Product {
 export class Warehouse {
     catalogue:Map<Product, number> // a dictionary of products with associated stock level
     constructor(catalogue:Map<Product, number>) {
-        this.catalogue = catalogue
+        this.catalogue = new Map(catalogue)
     }
     /**
      * Returns the stock level of a product

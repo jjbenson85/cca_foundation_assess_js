@@ -106,6 +106,42 @@ describe("Order", () => {
       expect(total).toBeCloseTo(expected);
     }
   );
+
+
+  it('should update the quantities of the warehouse when confirmed', () => {
+    const warehouse = new Warehouse(catalogue);
+    const order = new Order(addressA, warehouse);
+    const item = new Item(productA, 10);
+    order.add(item);
+    order.confirm();
+    expect(warehouse.checkStock(productA)).toEqual(90);
+  });
+
+  it('should throw an error if the product is not found when confirmed', () => {
+    const warehouse = new Warehouse(catalogue);
+    const order = new Order(addressA, warehouse);
+    const item = new Item(productA, 10);
+    order.add(item);
+
+     // Adjust warehouse stock between adding item and confirming
+     warehouse.removeProduct(productA);
+
+    expect(() => order.confirm()).toThrowError("Product not found");
+  })
+
+  it('should throw an error if the quantity is not available when confirmed', () => {
+    const warehouse = new Warehouse(catalogue);
+    const order = new Order(addressA, warehouse);
+    const item = new Item(productA, 50);
+    order.add(item);
+
+    // Adjust warehouse stock between adding item and confirming
+    warehouse.adjustStock(productA, 99);
+
+    expect(() => order.confirm()).toThrowError("Not enough stock");
+  })
+
+  
 });
 
 describe("Item", () => {

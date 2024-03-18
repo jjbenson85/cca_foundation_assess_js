@@ -77,6 +77,25 @@ export class Order {
       return Error(e);
     }
   }
+
+  confirm(): void {
+    try {
+      this.items.forEach((item) => {
+        const isProductAvailable = this.warehouse.isProductAvailable(
+          item.product,
+          item.quantity
+        );
+        if(!isProductAvailable) throw new Error("Not enough stock");
+        if(isProductAvailable instanceof Error) throw isProductAvailable;
+      });
+      this.items.forEach((item) => {
+        this.warehouse.adjustStock(item.product, item.quantity);
+      });
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  }
 }
 
 // Add Item - add an item to an order. An order item has a product and a quantity. There must be sufficient stock of that product to fulfil the order
