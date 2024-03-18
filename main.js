@@ -1,4 +1,3 @@
-// const calculateShipping = require("./shipping");
 import {calculateShipping} from "./shipping";
 import  {Country} from "./countries"
 
