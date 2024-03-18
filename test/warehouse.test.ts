@@ -54,24 +54,29 @@ describe("Warehouse", () => {
   });
 
   it.each([
-    ["productA", productA, 10, 110],
-    ["productB", productB, 10, 210],
-    ["productC", productC, 10, 310],
-  
-  ])('should adjust the stock of %s', (_id, product, quantity, expected ) => {
+    ["productA", productA, 10, 90],
+    ["productB", productB, 10, 190],
+    ["productC", productC, 10, 290],
+  ])("should adjust the stock of %s", (_id, product, quantity, expected) => {
     const warehouse = new Warehouse(catalogue);
-    expect(warehouse.adjustStock(product, quantity)).toEqual(expected)
+    expect(warehouse.adjustStock(product, quantity)).toEqual(expected);
+  });
+
+  it("should throw an error if the product is not found", () => {
+    const warehouse = new Warehouse(catalogue);
+    expect(() =>
+      warehouse.adjustStock(new Product("d", "A very nice product", 40.0), 10)
+    ).toThrowError("Product not found");
+  });
+
+  it('should remove a product from the catalogue', () => {
+    const warehouse = new Warehouse(catalogue);
+    warehouse.removeProduct(productA);
+    expect(warehouse.catalogue.get(productA)).toBeUndefined();
   })
 
-  it("should return an error if the product is not found", () => {
-    const warehouse = new Warehouse(catalogue);
-    expect(
-      warehouse.adjustStock(
-        new Product("d", "A very nice product", 40.0),
-        10
-      )
-    ).toEqual(Error("Product not found"));
-  })
+
+
 });
 
 describe("Product", () => {

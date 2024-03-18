@@ -14,27 +14,63 @@ export class Warehouse {
     constructor(catalogue:Map<Product, number>) {
         this.catalogue = catalogue
     }
-
+    /**
+     * Returns the stock level of a product
+     * @param product 
+     * @returns the quantity of the product in stock, or an error if the product is not found
+     */
     checkStock(product:Product):number|Error {
         const quantity = this.catalogue.get(product)
-        if(!quantity) return Error("Product not found")
+        if(quantity === undefined) return Error("Product not found")
         return quantity
     }
 
-    adjustStock(product:Product, quantity:number):Error|number {
+    /**
+     * Reduces the stock level of a product by the given quantity
+     * @param product the product to adjust the stock level of
+     * @param quantity the quantity to adjust the stock level by
+     * @returns the new stock level
+     * @throws Error if the product is not found
+     * @throws Error if the quantity is negative
+     * @throws Error if the stock level would go negative
+     */
+    adjustStock(product:Product, quantity:number):number {
         const currentQuantity = this.catalogue.get(product)
+        const isProductAvailable = this.isProductAvailable(product, quantity) 
 
-        if(!currentQuantity) return Error("Product not found")
+        if(!currentQuantity) throw Error("Product not found")
+        if(quantity < 0) throw Error("Invalid quantity")
+        if(isProductAvailable instanceof Error) throw isProductAvailable
 
-        const newQuantity = currentQuantity + quantity
+        const newQuantity = currentQuantity - quantity
         this.catalogue.set(product, newQuantity)
 
         return newQuantity
     }
 
+    /**
+     *  Checks if the given quantity of a product is available
+     * @param product 
+     * @param quantity 
+     * @returns true if the quantity is available, false if not, or an error if the product is not found
+     */
     isProductAvailable(product:Product, quantity:number):boolean|Error {
         const availableQuatity =  this.checkStock(product)
         if( availableQuatity instanceof Error) return availableQuatity
         return availableQuatity >= quantity
     }
+
+    /**
+     * Removes a product from the catalogue
+     * @param product
+     * @returns true if the product was removed, or an error if the product is not found
+    */
+    removeProduct(product:Product):true|Error {
+        if(this.catalogue.has(product)){
+            this.catalogue.delete(product)
+            return true
+        }
+        return Error('Product not found')
+    }
+    
 }
