@@ -1,4 +1,4 @@
-import { Order, Item, Address } from "../order";
+import { Order, Item, Address, OrderHistory } from "../order";
 import { describe, expect, it } from "vitest";
 import { Product, Warehouse } from "../warehouse";
 import { Country } from "../countries";
@@ -7,19 +7,22 @@ const productA = new Product("a", "A very nice product", 10.0);
 const productB = new Product("b", "A very nice product", 20.0);
 const productC = new Product("c", "A very nice product", 30.0);
 
+const catalogue = new Map([
+  [productA, 100],
+  [productB, 100],
+  [productC, 100],
+]);
+
+const warehouse = new Warehouse(catalogue);
+
+const addressA = new Address({
+  country: Country.UNITED_KINGDOM,
+  city: "London",
+  street: "123 Fake St",
+  postcode: "E1 4UD",
+});
+
 describe("Order", () => {
-  const catalogue = new Map([
-    [productA, 100],
-    [productB, 100],
-    [productC, 100],
-  ]);
-  const addressA = new Address({
-    country: Country.UNITED_KINGDOM,
-    city: "London",
-    street: "123 Fake St",
-    postcode: "E1 4UD",
-  });
-  const warehouse = new Warehouse(catalogue);
   it("should have an empty list of items and a shipping address", () => {
     const order = new Order(addressA, warehouse);
     expect(order.items).toEqual([]);
@@ -107,8 +110,7 @@ describe("Order", () => {
     }
   );
 
-
-  it('should update the quantities of the warehouse when confirmed', () => {
+  it("should update the quantities of the warehouse when confirmed", () => {
     const warehouse = new Warehouse(catalogue);
     const order = new Order(addressA, warehouse);
     const item = new Item(productA, 10);
@@ -117,19 +119,19 @@ describe("Order", () => {
     expect(warehouse.checkStock(productA)).toEqual(90);
   });
 
-  it('should throw an error if the product is not found when confirmed', () => {
+  it("should throw an error if the product is not found when confirmed", () => {
     const warehouse = new Warehouse(catalogue);
     const order = new Order(addressA, warehouse);
     const item = new Item(productA, 10);
     order.add(item);
 
-     // Adjust warehouse stock between adding item and confirming
-     warehouse.removeProduct(productA);
+    // Adjust warehouse stock between adding item and confirming
+    warehouse.removeProduct(productA);
 
     expect(() => order.confirm()).toThrowError("Product not found");
-  })
+  });
 
-  it('should throw an error if the quantity is not available when confirmed', () => {
+  it("should throw an error if the quantity is not available when confirmed", () => {
     const warehouse = new Warehouse(catalogue);
     const order = new Order(addressA, warehouse);
     const item = new Item(productA, 50);
@@ -139,9 +141,7 @@ describe("Order", () => {
     warehouse.adjustStock(productA, 99);
 
     expect(() => order.confirm()).toThrowError("Not enough stock");
-  })
-
-  
+  });
 });
 
 describe("Item", () => {
@@ -191,5 +191,37 @@ describe("Address", () => {
       postcode: "E1 4UD",
     });
     expect(address.postcode).toEqual("E1 4UD");
+  });
+});
+
+describe("OrderHistory", () => {
+  it("should have an empty list of productOrders", () => {
+    const orderHistory = new OrderHistory();
+    expect(orderHistory.productOrders).toEqual(new Map());
+  });
+
+  it("should have an empty list of addressOrders", () => {
+    const orderHistory = new OrderHistory();
+    expect(orderHistory.addressOrders).toEqual(new Map());
+  });
+
+  it("should be able to add an order to the productOrders", () => {
+    const orderHistory = new OrderHistory();
+    const order = new Order(addressA, warehouse);
+    order.add(new Item(productA, 1));
+    orderHistory.add(order);
+    const orders = orderHistory.productOrders.get(productA);
+    if (!orders) throw Error("Order not found");
+    expect(orders).toEqual(new Set([order]));
+  });
+
+  it("should be able to add an order to the addressOrders", () => {
+    const orderHistory = new OrderHistory();
+    const order = new Order(addressA, warehouse);
+    order.add(new Item(productA, 1));
+    orderHistory.add(order);
+    const orders = orderHistory.addressOrders.get(addressA);
+    if (!orders) throw Error("Order not found");
+    expect(orders).toEqual(new Set([order]));
   });
 });

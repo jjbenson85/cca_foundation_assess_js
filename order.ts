@@ -85,8 +85,8 @@ export class Order {
           item.product,
           item.quantity
         );
-        if(!isProductAvailable) throw new Error("Not enough stock");
-        if(isProductAvailable instanceof Error) throw isProductAvailable;
+        if (!isProductAvailable) throw new Error("Not enough stock");
+        if (isProductAvailable instanceof Error) throw isProductAvailable;
       });
       this.items.forEach((item) => {
         this.warehouse.adjustStock(item.product, item.quantity);
@@ -98,8 +98,25 @@ export class Order {
   }
 }
 
-// Add Item - add an item to an order. An order item has a product and a quantity. There must be sufficient stock of that product to fulfil the order
-
-// Total including shipping - calculate the total amount payable for the order, including shipping to the address
-
-// Confirm order - when an order is confirmed, the stock levels of every product in the items are adjusted by the item quantity, and then the order is added to the sales history.
+export class OrderHistory {
+  productOrders: Map<Product, Set<Order>>;
+  addressOrders: Map<Address, Set<Order>>;
+  constructor() {
+    this.productOrders = new Map();
+    this.addressOrders = new Map();
+  }
+  add(order: Order) {
+    for (const item of order.items) {
+      if (this.productOrders.has(item.product)) {
+        this.productOrders.get(item.product)?.add(order);
+      } else {
+        this.productOrders.set(item.product, new Set([order]));
+      }
+      if (this.addressOrders.has(order.shippingAddress)) {
+        this.addressOrders.get(order.shippingAddress)?.add(order);
+      } else {
+        this.addressOrders.set(order.shippingAddress, new Set([order]));
+      }
+    }
+  }
+}
