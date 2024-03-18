@@ -1,11 +1,10 @@
-const calculateShipping = require("./shipping");
-const Country = require("./countries")
+// const calculateShipping = require("./shipping");
+import {calculateShipping} from "./shipping";
+import  {Country} from "./countries"
 
-function printShippingCosts(country, orderTotal) {
-    function callback(shipping){
-        console.log(`Shipping cost to ${country} for order total £${orderTotal} is £${shipping}`);
-    }
-    calculateShipping(country, orderTotal, callback);
+async function printShippingCosts(country, orderTotal) {
+    const shipping = await calculateShipping(country, orderTotal);
+    console.log(`Shipping cost to ${country} for order total £${orderTotal} is £${shipping}`)
 }
 
 printShippingCosts(Country.UNITED_KINGDOM, 99.99);
