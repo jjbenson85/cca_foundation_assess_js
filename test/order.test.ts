@@ -86,6 +86,26 @@ describe("Order", () => {
       expect(order.getSubtotal()).toEqual(expected);
     }
   );
+
+  it.each([
+    ["1x productA", productA, 1, 14.99],
+    ["1x productB", productB, 1, 24.99],
+    ["2x productA", productA, 2, 24.99],
+  ])(
+    "should calculate the total for %s",
+    async (_id, product, quantity, expected) => {
+      const calculateShipping = async () => 4.99;
+
+      const order = new Order(addressA, warehouse, calculateShipping);
+      const item = new Item(product, quantity);
+
+      order.add(item);
+
+      const total = await order.getTotal();
+
+      expect(total).toBeCloseTo(expected);
+    }
+  );
 });
 
 describe("Item", () => {

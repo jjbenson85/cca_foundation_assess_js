@@ -63,7 +63,20 @@ export class Order {
       0
     );
   }
-  
+
+  async getTotal(): Promise<number | Error> {
+    const country = this.shippingAddress.country;
+    const subtotal = this.getSubtotal();
+
+    try {
+      const shippingTotal = await this.calculateShipping(country, subtotal);
+      return subtotal + shippingTotal;
+    } catch (e) {
+      console.error(e);
+      if (e instanceof Error) return e;
+      return Error(e);
+    }
+  }
 }
 
 // Add Item - add an item to an order. An order item has a product and a quantity. There must be sufficient stock of that product to fulfil the order

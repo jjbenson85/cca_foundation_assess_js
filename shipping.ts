@@ -1,6 +1,6 @@
 const https = require("https");
 
-export function getRegion(country: string): Promise<"UK" | "EU" | "OTHER" > {
+export function getRegion(country: string): Promise<"UK" | "EU" | "OTHER"> {
   const url = `https://npovmrfcyzu2gu42pmqa7zce6a0zikbf.lambda-url.eu-west-2.on.aws/?country=${country}`;
   return new Promise<"UK" | "EU" | "OTHER">((resolve, reject) => {
     https
@@ -60,12 +60,10 @@ export const calculateShipping = async (
   country: string,
   orderTotal: number
 ) => {
-    try{
-        const region = await getRegion(country);
-        return calculateShippingFromRegion(region, orderTotal);
-
-    }catch(e){
-        if (e instanceof Error) return (e);
-        return new Error(e);
-    }
+  try {
+    const region = await getRegion(country);
+    return calculateShippingFromRegion(region, orderTotal);
+  } catch (e) {
+    throw e;
+  }
 };
