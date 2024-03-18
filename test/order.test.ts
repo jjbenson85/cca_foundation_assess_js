@@ -3,7 +3,8 @@ import { describe, expect, it } from "vitest";
 import { Warehouse } from "../warehouse";
 
 describe("Order", () => {
-  const warehouse = new Warehouse();
+  const catalogue = new Map();
+  const warehouse = new Warehouse(catalogue);
   it("should have an empty list of items and a shipping address", () => {
     const order = new Order("123 Fake St", warehouse);
     expect(order.items).toEqual([]);

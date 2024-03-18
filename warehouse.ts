@@ -10,8 +10,8 @@ class Product {
 }
 
 export class Warehouse {
-    catalogue // a dictionary of products with associated stock level
-    constructor() {
-        this.catalogue = {}
+    catalogue:Map<string,Product> // a dictionary of products with associated stock level
+    constructor(catalogue:Map<string,Product>) {
+        this.catalogue = catalogue
     }
 }
