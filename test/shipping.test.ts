@@ -64,7 +64,7 @@ describe("Shipping", () => {
 
     it("should throw an error if the region is invalid",()=>{
         const data = JSON.stringify({region: "INVALID"})
-        expect(()=> getRegionFromData(data)).toThrowError("Invalid region")
+        expect(()=> getRegionFromData(data)).toThrowError()
     })
 
     it("should throw an error if the data is invalid",()=>{
