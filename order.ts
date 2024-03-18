@@ -27,6 +27,11 @@ export class Order {
     
     this.items.push(item);
   }
+
+  getSubtotal(): number {
+    return this.items.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
+  }
+  
 }
 
 // Add Item - add an item to an order. An order item has a product and a quantity. There must be sufficient stock of that product to fulfil the order

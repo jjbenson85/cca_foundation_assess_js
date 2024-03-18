@@ -57,6 +57,28 @@ describe("Order", () => {
     const item = new Item(new Product("d", "Not a real product", 40.0), 10);
     expect(order.add(item)).toEqual(Error("Product not found"));
   });
+
+  it.each([
+    ["zero items", [], 0],
+    ["one item",  [new Item(productA, 1)], 10],
+    ["multiple items", [new Item(productA, 1), new Item(productB, 1)], 30],
+    [
+      "multiple items with different quantities",
+      [new Item(productA, 1), new Item(productB, 2), new Item(productC, 3)],
+      140,
+    ],
+  ] as [string, Item[], number][])(
+    "should calculate the subtotal for %s",
+    (_id, items, expected) => {
+      const order = new Order("123 Fake St", warehouse);
+
+      for (const item of items) {
+        order.add(item);
+      }
+
+      expect(order.getSubtotal()).toEqual(expected);
+    }
+  );
 });
 
 describe("Item", () => {
